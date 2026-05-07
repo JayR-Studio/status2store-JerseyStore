@@ -2091,3 +2091,31 @@ body.theme-sports .restock-btn:hover {
 .image-fallback::before {
     display: none;
 }
+
+.upload-status {
+    display: none;
+    margin-top: 10px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.upload-status.active {
+    display: block;
+}
+
+.upload-status.success {
+    color: #16803c;
+    background: #e9f8ef;
+    border-color: #bde8cc;
+}
+
+.upload-status.error {
+    color: #c92a2a;
+    background: #fff0f0;
+    border-color: #ffd0d0;
+}

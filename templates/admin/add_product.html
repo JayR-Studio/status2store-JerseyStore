@@ -83,8 +83,14 @@
                         id="images"
                         name="images"
                         accept="image/png, image/jpeg, image/jpg, image/webp"
+                        multiple
+                        class="image-compress-input"
                 >
-                <small>Upload one image at a time. Use compressed images under 3 MB.</small>
+                <small class="image-upload-note">
+                    You can upload multiple images. They will be optimized automatically before upload.
+                </small>
+
+                <div class="upload-status" id="uploadStatus"></div>
             </div>
 
             <div class="form-group">
