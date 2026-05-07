@@ -19,19 +19,23 @@
             {% endif %}
         </div>
 
-        {% for image in product.images %}
-        {% set image_src = image.image_url if image.image_url.startswith("http") else url_for('static',
-        filename=image.image_url) %}
+        {% if product.images %}
+        <div class="product-thumbnails">
+            {% for image in product.images %}
+            {% set image_src = image.image_url if image.image_url.startswith("http") else url_for('static',
+            filename=image.image_url) %}
 
-        <button
-                type="button"
-                class="thumbnail {% if loop.first %}active{% endif %}"
-                aria-label="Product image {{ loop.index }}"
-                data-image="{{ image_src }}"
-        >
-            <img src="{{ image_src }}" alt="{{ product.name }}">
-        </button>
-        {% endfor %}
+            <button
+                    type="button"
+                    class="thumbnail {% if loop.first %}active{% endif %}"
+                    aria-label="Product image {{ loop.index }}"
+                    data-image="{{ image_src }}"
+            >
+                <img src="{{ image_src }}" alt="{{ product.name }}">
+            </button>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 
     <div class="product-detail-content">
