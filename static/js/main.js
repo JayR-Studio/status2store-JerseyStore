@@ -133,4 +133,23 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     }
+
+        // Image upload size guard
+    const imageInputs = document.querySelectorAll('input[type="file"][name="images"], input[type="file"][name="hero_image"]');
+
+    imageInputs.forEach(function (input) {
+        input.addEventListener("change", function () {
+            const maxSize = 3 * 1024 * 1024; // 3 MB
+            const files = Array.from(input.files);
+
+            const tooLarge = files.find(function (file) {
+                return file.size > maxSize;
+            });
+
+            if (tooLarge) {
+                alert("This image is too large. Please upload an image under 3 MB.");
+                input.value = "";
+            }
+        });
+    });
 });
