@@ -83,7 +83,7 @@
                 {% endfor %}
             </div>
         </div>
-
+        {% set default_size = (product.sizes or 'S,M,L,XL,XXL').split(',')[0].strip() %}
         {% if settings and settings.whatsapp_number %}
 
         <a

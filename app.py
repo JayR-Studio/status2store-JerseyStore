@@ -63,7 +63,11 @@ def create_app():
         return blob.url
 
     def upload_to_blob(file_bytes, pathname):
-        return asyncio.run(upload_to_blob_async(file_bytes, pathname))
+        try:
+            return asyncio.run(upload_to_blob_async(file_bytes, pathname))
+        except Exception as error:
+            print("Blob upload failed:", error)
+            return None
 
     def allowed_image(filename):
         return (
@@ -271,6 +275,10 @@ def create_app():
                     blob_path = f"products/{slug}/{filename}"
                     image_url = upload_to_blob(compressed_image, blob_path)
 
+                    if not image_url:
+                        flash("Image upload failed. Please try again.", "error")
+                        return redirect(url_for("admin_add_product"))
+
                     saved_images.append(image_url)
 
             image_url = saved_images[0] if saved_images else None
@@ -358,6 +366,10 @@ def create_app():
 
                     blob_path = f"products/{product.slug}/{filename}"
                     image_url = upload_to_blob(compressed_image, blob_path)
+
+                    if not image_url:
+                        flash("Image upload failed. Please try again.", "error")
+                        return redirect(url_for("admin_edit_product", product_id=product.id))
 
                     saved_images.append(image_url)
 
@@ -574,7 +586,13 @@ def create_app():
                 compressed_image = compress_image(hero_image, max_size=(1600, 1000), quality=80)
 
                 blob_path = f"settings/hero/{filename}"
-                settings.hero_image_url = upload_to_blob(compressed_image, blob_path)
+                hero_image_url = upload_to_blob(compressed_image, blob_path)
+
+                if not hero_image_url:
+                    flash("Homepage image upload failed. Please try again.", "error")
+                    return redirect(url_for("admin_settings"))
+
+                settings.hero_image_url = hero_image_url
 
             db.session.commit()
 

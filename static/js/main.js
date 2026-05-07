@@ -101,7 +101,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-        // Product size selector + WhatsApp message
+    // =========================
+    // Product size selector + WhatsApp message
+    // =========================
     const sizeOptions = document.querySelectorAll(".size-option");
     const whatsappOrderBtn = document.querySelector(".whatsapp-order-btn");
 
@@ -159,10 +161,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function canvasToBlob(canvas, quality) {
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             canvas.toBlob(
                 function (blob) {
-                    resolve(blob);
+                    if (blob) {
+                        resolve(blob);
+                    } else {
+                        reject(new Error("Image compression failed."));
+                    }
                 },
                 "image/jpeg",
                 quality
@@ -191,6 +197,11 @@ document.addEventListener("DOMContentLoaded", function () {
         canvas.height = height;
 
         const ctx = canvas.getContext("2d");
+
+        // Prevent transparent PNGs from turning black after JPEG conversion
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+
         ctx.drawImage(img, 0, 0, width, height);
 
         const blob = await canvasToBlob(canvas, quality);
@@ -214,13 +225,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     imageCompressInputs.forEach(function (input) {
         input.addEventListener("change", async function () {
-            const statusBox = document.getElementById("uploadStatus");
-
             if (!input.files || input.files.length === 0) {
                 return;
             }
 
+            const form = input.closest("form");
+            const submitButton = form ? form.querySelector('button[type="submit"]') : null;
+            const originalButtonText = submitButton ? submitButton.textContent : "";
+
+            const statusBox = input.parentElement.querySelector(".upload-status");
             const originalFiles = Array.from(input.files);
+
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = "Optimizing...";
+            }
 
             if (statusBox) {
                 statusBox.className = "upload-status active";
@@ -258,6 +277,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         statusBox.textContent = "The selected images are still too large after optimization. Try fewer images at once.";
                     }
 
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.textContent = originalButtonText;
+                    }
+
                     return;
                 }
 
@@ -274,12 +298,22 @@ document.addEventListener("DOMContentLoaded", function () {
                     statusBox.className = "upload-status active success";
                     statusBox.textContent = `Images optimized successfully. Total upload size: ${sizeInMB} MB.`;
                 }
+
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText;
+                }
             } catch (error) {
                 input.value = "";
 
                 if (statusBox) {
                     statusBox.className = "upload-status active error";
                     statusBox.textContent = "Could not optimize these images. Please try different images.";
+                }
+
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText;
                 }
 
                 console.error("Image compression failed:", error);

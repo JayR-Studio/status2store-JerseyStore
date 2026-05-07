@@ -26,7 +26,7 @@
         <nav class="desktop-nav">
             <a href="{{ url_for('index') }}">Home</a>
             <a href="{{ url_for('catalogue') }}">Catalogue</a>
-            <a href="#how-to-order">How to Order</a>
+            <a href="{{ url_for('index') }}#how-to-order">How to Order</a>
             <a href="#contact">Contact</a>
         </nav>
 
@@ -52,7 +52,7 @@
 <div class="mobile-menu" id="mobileMenu">
     <a href="{{ url_for('index') }}">Home</a>
     <a href="{{ url_for('catalogue') }}">Catalogue</a>
-    <a href="#how-to-order">How to Order</a>
+    <a href="{{ url_for('index') }}#how-to-order">How to Order</a>
     <a href="#contact">Contact</a>
 
     {% if settings and settings.whatsapp_number %}
@@ -84,7 +84,7 @@
             <h3>Quick Links</h3>
             <a href="{{ url_for('index') }}">Home</a>
             <a href="{{ url_for('catalogue') }}">Catalogue</a>
-            <a href="#how-to-order">How to Order</a>
+            <a href="{{ url_for('index') }}#how-to-order">How to Order</a>
         </div>
 
         <div>
