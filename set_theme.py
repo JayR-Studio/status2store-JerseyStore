@@ -7,6 +7,6 @@ with app.app_context():
     if settings:
         settings.theme = "luxury"
         db.session.commit()
-        print("Theme changed to luxury.")
+        print("Theme changed.")
     else:
         print("No settings found.")
