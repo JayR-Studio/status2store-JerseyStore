@@ -107,8 +107,61 @@ document.addEventListener("DOMContentLoaded", function () {
     const sizeOptions = document.querySelectorAll(".size-option");
     const whatsappOrderBtn = document.querySelector(".whatsapp-order-btn");
 
-    if (sizeOptions.length > 0 && whatsappOrderBtn) {
+    function updateWhatsAppOrderMessage(selectedSize) {
+        if (!whatsappOrderBtn) {
+            return;
+        }
+
         const isAvailable = whatsappOrderBtn.dataset.available === "true";
+        const baseUrl = whatsappOrderBtn.dataset.baseUrl;
+        const productName = whatsappOrderBtn.dataset.productName || "Product";
+        const productCategory = whatsappOrderBtn.dataset.productCategory || "Jersey";
+        const productPrice = whatsappOrderBtn.dataset.productPrice || "";
+        const productDescription = whatsappOrderBtn.dataset.productDescription || "No description provided.";
+        const productUrl = whatsappOrderBtn.dataset.productUrl || window.location.href;
+
+        let message;
+
+        if (isAvailable) {
+            message = `Hello, I want to order this item:
+
+    Product: ${productName}
+    Category: ${productCategory}
+    Size: ${selectedSize}
+    Price: ${productPrice}
+
+    Description:
+    ${productDescription}
+
+    Product link:
+    ${productUrl}
+
+    Please confirm availability, payment, and delivery details.`;
+        } else {
+            message = `Hello, I am interested in this item:
+
+    Product: ${productName}
+    Category: ${productCategory}
+    Price: ${productPrice}
+
+    Description:
+    ${productDescription}
+
+    Product link:
+    ${productUrl}
+
+    Please notify me when it is back in stock.`;
+        }
+
+        const encodedMessage = encodeURIComponent(message);
+        whatsappOrderBtn.href = `${baseUrl}?text=${encodedMessage}`;
+    }
+
+    if (sizeOptions.length > 0 && whatsappOrderBtn) {
+        const activeSize = document.querySelector(".size-option.active");
+        const defaultSize = activeSize ? activeSize.dataset.size : sizeOptions[0].dataset.size;
+
+        updateWhatsAppOrderMessage(defaultSize);
 
         sizeOptions.forEach(function (button) {
             button.addEventListener("click", function () {
@@ -119,19 +172,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 button.classList.add("active");
 
                 const selectedSize = button.dataset.size;
-                const baseUrl = whatsappOrderBtn.dataset.baseUrl;
-                const productName = whatsappOrderBtn.dataset.productName;
-
-                let message;
-
-                if (isAvailable) {
-                    message = `Hi, I am interested in this ${productName}, Size: ${selectedSize}`;
-                } else {
-                    message = `Hi, I am interested in this ${productName}. Please notify me when it is back in stock.`;
-                }
-
-                const encodedMessage = encodeURIComponent(message);
-                whatsappOrderBtn.href = `${baseUrl}?text=${encodedMessage}`;
+                updateWhatsAppOrderMessage(selectedSize);
             });
         });
     }

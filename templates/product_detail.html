@@ -78,15 +78,58 @@
             </div>
         </div>
         {% set default_size = (product.sizes or 'S,M,L,XL,XXL').split(',')[0].strip() %}
-        {% if settings and settings.whatsapp_number %}
+        {% set default_size = (product.sizes or 'S,M,L,XL,XXL').split(',')[0].strip() %}
 
+        {% set product_category = product.category.name if product.category else "Jersey" %}
+
+        {% set product_description = product.description or "This product is available for order. Please confirm size,
+        payment, and delivery details." %}
+
+        {% set order_message %}
+        Hello, I want to order this item:
+
+        Product: {{ product.name }}
+        Category: {{ product_category }}
+        Size: {{ default_size }}
+        Price: ₦{{ "{:,}".format(product.price) }}
+
+        Description:
+        {{ product_description }}
+
+        Product link:
+        {{ request.url }}
+
+        Please confirm availability, payment, and delivery details.
+        {% endset %}
+
+        {% set restock_message %}
+        Hello, I am interested in this item:
+
+        Product: {{ product.name }}
+        Category: {{ product_category }}
+        Price: ₦{{ "{:,}".format(product.price) }}
+
+        Description:
+        {{ product_description }}
+
+        Product link:
+        {{ request.url }}
+
+        Please notify me when it is back in stock.
+        {% endset %}
+
+        {% if settings and settings.whatsapp_number %}
         <a
-                class="btn-primary full-btn whatsapp-order-btn {% if not product.is_available %}restock-btn{% endif %}"
-                href="https://wa.me/{{ settings.whatsapp_number }}?text={% if product.is_available %}Hi%2C%20I%20am%20interested%20in%20this%20{{ product.name }}%2C%20Size%3A%20{{ default_size }}{% else %}Hi%2C%20I%20am%20interested%20in%20this%20{{ product.name }}.%20Please%20notify%20me%20when%20it%20is%20back%20in%20stock.{% endif %}"
-                data-base-url="https://wa.me/{{ settings.whatsapp_number }}"
-                data-product-name="{{ product.name }}"
-                data-available="{{ 'true' if product.is_available else 'false' }}"
-                target="_blank"
+            class="btn-primary full-btn whatsapp-order-btn {% if not product.is_available %}restock-btn{% endif %}"
+            href="https://wa.me/{{ settings.whatsapp_number }}?text={{ order_message | urlencode if product.is_available else restock_message | urlencode }}"
+            data-base-url="https://wa.me/{{ settings.whatsapp_number }}"
+            data-product-name="{{ product.name }}"
+            data-product-category="{{ product_category }}"
+            data-product-price="₦{{ '{:,}'.format(product.price) }}"
+            data-product-description="{{ product_description }}"
+            data-product-url="{{ request.url }}"
+            data-available="{{ 'true' if product.is_available else 'false' }}"
+            target="_blank"
         >
             {% if product.is_available %}
             Order on WhatsApp
