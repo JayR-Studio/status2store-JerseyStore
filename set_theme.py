@@ -5,7 +5,7 @@ with app.app_context():
     settings = SiteSettings.query.first()
 
     if settings:
-        settings.theme = "luxury"
+        settings.theme = "sports"
         db.session.commit()
         print("Theme changed.")
     else:

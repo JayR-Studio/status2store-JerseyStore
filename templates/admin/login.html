@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Login | {{ settings.business_name if settings else "Status2Store" }}</title>
+    <title>Admin Login | {{ settings.business_name if settings else "FootballChannel" }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Google Fonts -->
@@ -18,7 +18,7 @@
 <section class="login-page">
     <div class="login-card">
         <a href="{{ url_for('index') }}" class="login-logo">
-            {{ settings.business_name if settings else "Status2Store" }}
+            {{ settings.business_name if settings else "FootballChannel" }}
         </a>
 
         <div class="login-heading">
@@ -46,7 +46,7 @@
                     type="email"
                     id="email"
                     name="email"
-                    placeholder="admin@status2store.com"
+                    placeholder="admin@FootballChannel.com"
                     required
                 >
             </div>

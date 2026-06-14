@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin | {{ settings.business_name if settings else "Status2Store" }}</title>
+    <title>Admin | {{ settings.business_name if settings else "FootballChannel" }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Google Fonts -->
@@ -20,7 +20,7 @@
 
     <aside class="admin-sidebar" id="adminSidebar">
         <a href="{{ url_for('admin_dashboard') }}" class="admin-logo">
-            {{ settings.business_name if settings else "Status2Store" }}
+            {{ settings.business_name if settings else "FootballChannel" }}
         </a>
 
         <nav class="admin-nav">

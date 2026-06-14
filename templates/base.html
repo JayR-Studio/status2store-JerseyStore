@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ settings.business_name if settings else "Status2Store" }}</title>
+    <title>{{ settings.business_name if settings else "FootballChannel" }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Google Fonts -->
@@ -20,7 +20,7 @@
     <div class="container nav-wrapper">
 
         <a href="{{ url_for('index') }}" class="logo">
-            {{ settings.business_name if settings else "Status2Store" }}
+            {{ settings.business_name if settings else "FootballChannel" }}
         </a>
 
         <nav class="desktop-nav">
@@ -73,7 +73,7 @@
 <footer class="site-footer" id="contact">
     <div class="container footer-grid">
         <div>
-            <h2>{{ settings.business_name if settings else "Status2Store" }}</h2>
+            <h2>{{ settings.business_name if settings else "FootballChannel" }}</h2>
             <p>
                 {{ settings.about_text if settings and settings.about_text else "A premium catalogue website for stylish
                 WhatsApp and Instagram vendors." }}
@@ -109,7 +109,7 @@
     </div>
 
     <div class="footer-bottom">
-        <p>&copy; 2026 {{ settings.business_name if settings else "Status2Store" }}. All rights reserved.</p>
+        <p>&copy; 2026 {{ settings.business_name if settings else "FootballChannel" }}. All rights reserved.</p>
     </div>
 </footer>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
