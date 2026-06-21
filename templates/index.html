@@ -2,42 +2,28 @@
 
 {% block content %}
 
-<section class="hero">
+<section class="hero jersey-hero">
     <div class="container hero-grid">
         <div class="hero-content">
-            <span class="eyebrow">Premium WhatsApp Catalogue</span>
+            <span class="eyebrow">Premium Football Jerseys</span>
 
-            <h1>{{ settings.hero_text if settings and settings.hero_text else "Elegant styles, beautifully arranged for
-                easy ordering." }}</h1>
+            <h1>
+                WEAR YOUR CLUB.
+                <span>LIVE THE GAME.</span>
+            </h1>
 
             <p>
-                {{ settings.about_text if settings and settings.about_text else "Browse products, check prices, and
-                order directly on WhatsApp. No stress. No confusion. Just a clean shopping experience." }}
+                {{ settings.about_text if settings and settings.about_text else "Premium quality football jerseys for true fans. Pick your size and order directly on WhatsApp." }}
             </p>
 
             <div class="hero-actions">
-                <a href="{{ url_for('catalogue') }}" class="btn-primary">View Catalogue</a>
+                <a href="{{ url_for('catalogue') }}" class="btn-primary">Shop Now</a>
 
                 {% if settings and settings.whatsapp_number %}
                 <a href="https://wa.me/{{ settings.whatsapp_number }}" target="_blank" class="btn-secondary">
                     Chat on WhatsApp
                 </a>
                 {% endif %}
-            </div>
-        </div>
-
-        <div class="hero-visual">
-            <div class="hero-image-main">
-                {% if settings and settings.hero_image_url %}
-                {% if settings.hero_image_url.startswith("http") %}
-                <img src="{{ settings.hero_image_url }}" alt="{{ settings.business_name }}">
-                {% else %}
-                <img src="{{ url_for('static', filename=settings.hero_image_url) }}" alt="{{ settings.business_name }}">
-                {% endif %}
-                {% endif %}
-            </div>
-            <div class="floating-card">
-                <span>New Arrival</span>
             </div>
         </div>
     </div>
