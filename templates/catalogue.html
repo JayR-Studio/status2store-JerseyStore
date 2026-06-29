@@ -71,8 +71,10 @@
 
     <div class="product-grid catalogue-grid">
         {% for product in products %}
-        <a href="{{ url_for('product_detail', slug=product.slug) }}"
-           class="product-card {% if not product.is_available %}sold-card{% endif %}">
+        {% set product_image = product.image_url if product.image_url and product.image_url.startswith('http') else (url_for('static', filename=product.image_url) if product.image_url else '') %}
+        {% set default_size = (product.sizes or 'S,M,L,XL,XXL').split(',')[0].strip() %}
+        <div class="product-card {% if not product.is_available %}sold-card{% endif %}">
+            <a href="{{ url_for('product_detail', slug=product.slug) }}" class="product-card-link">
             <div class="product-image {% if not product.image_url %}image-fallback{% endif %}">
                 {% if product.image_url %}
                 {% if product.image_url.startswith("http") %}
@@ -99,7 +101,22 @@
                 <small class="status sold-out">Sold Out</small>
                 {% endif %}
             </div>
-        </a>
+            </a>
+            <button
+                class="card-basket-btn add-to-basket"
+                type="button"
+                data-id="{{ product.id }}"
+                data-name="{{ product.name }}"
+                data-price="{{ product.price }}"
+                data-image="{{ product_image }}"
+                data-url="{{ url_for('product_detail', slug=product.slug, _external=True) }}"
+                data-size="{{ default_size }}"
+                data-sizes="{{ product.sizes or 'S,M,L,XL,XXL' }}"
+                {% if not product.is_available %}disabled{% endif %}
+            >
+                {{ "Add to Basket" if product.is_available else "Sold Out" }}
+            </button>
+        </div>
         {% else %}
         <div class="empty-state">
             <h3>No products found.</h3>

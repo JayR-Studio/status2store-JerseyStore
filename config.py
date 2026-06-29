@@ -10,7 +10,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = (
         os.getenv("DATABASE_URL")
         or os.getenv("POSTGRES_URL")
-        or "sqlite:///status2store.db"
+        or "sqlite:///footballchannel.db"
     )
 
     # Clean accidental spaces or wrapping quotes from env values

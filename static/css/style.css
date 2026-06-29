@@ -331,7 +331,7 @@ a {
 }
 
 .hero-image-main::after {
-    content: "Boutique";
+    content: "Jersey";
     position: absolute;
     bottom: 40px;
     left: 40px;
@@ -2915,5 +2915,340 @@ body.theme-sports:not(.admin-body) .hero-actions {
 @media (max-width: 768px) {
     body.theme-sports .jersey-hero {
         animation: none;
+    }
+}
+
+/* =========================
+   Order Basket
+========================= */
+
+.product-card-link {
+    color: inherit;
+    display: block;
+    text-decoration: none;
+}
+
+.card-basket-btn {
+    width: 100%;
+    margin-top: 14px;
+    min-height: 42px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--black);
+    color: var(--white);
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.card-basket-btn:hover {
+    transform: translateY(-2px);
+}
+
+.card-basket-btn:disabled,
+.detail-add:disabled,
+.basket-checkout:disabled,
+.basket-clear:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.basket-toggle,
+.mobile-basket-link {
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--black);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 900;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mobile-basket-link {
+    justify-content: center;
+    width: 100%;
+}
+
+.basket-count {
+    min-width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gold);
+    color: #061006;
+    font-size: 0.72rem;
+}
+
+.basket-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.56);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.25s ease;
+    z-index: 90;
+}
+
+.basket-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.basket-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 100;
+    width: min(430px, 100%);
+    height: 100vh;
+    background: #ffffff;
+    color: #101820;
+    transform: translateX(100%);
+    transition: transform 0.28s ease;
+    display: flex;
+    flex-direction: column;
+    padding: 26px;
+    box-shadow: -20px 0 60px rgba(0, 0, 0, 0.28);
+}
+
+.basket-drawer.active {
+    transform: translateX(0);
+}
+
+.basket-open {
+    overflow: hidden;
+}
+
+.basket-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #dbe2ea;
+}
+
+.basket-head h2 {
+    font-size: 1.55rem;
+}
+
+.basket-close,
+.basket-remove {
+    border: 0;
+    background: transparent;
+    color: #4b5563;
+    cursor: pointer;
+    font-size: 1.6rem;
+}
+
+.basket-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 0;
+}
+
+.basket-item {
+    display: grid;
+    grid-template-columns: 74px 1fr 28px;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #edf1f5;
+}
+
+.basket-item-image {
+    height: 82px;
+    border-radius: 10px;
+    background: #eef3f7;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: #00a844;
+    font-weight: 900;
+}
+
+.basket-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.basket-item-info h3 {
+    font-size: 0.9rem;
+    line-height: 1.3;
+}
+
+.basket-item-info p {
+    color: #6b7280;
+    font-size: 0.78rem;
+    margin: 3px 0;
+}
+
+.basket-size-label {
+    display: grid;
+    gap: 5px;
+    color: #6b7280;
+    font-size: 0.72rem;
+    font-weight: 800;
+    margin: 6px 0;
+}
+
+.basket-size-select {
+    width: min(150px, 100%);
+    height: 34px;
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #101820;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 800;
+    padding: 0 9px;
+}
+
+.basket-item-info strong {
+    display: block;
+    font-size: 0.86rem;
+}
+
+.quantity-control {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 8px;
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.quantity-control button {
+    width: 30px;
+    height: 28px;
+    border: 0;
+    background: #f4f6f8;
+    cursor: pointer;
+}
+
+.quantity-control span {
+    min-width: 30px;
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.basket-empty {
+    margin: 80px auto;
+    max-width: 270px;
+    text-align: center;
+}
+
+.basket-empty h3 {
+    margin-bottom: 8px;
+}
+
+.basket-empty p {
+    color: #6b7280;
+    font-size: 0.88rem;
+}
+
+.basket-summary {
+    padding-top: 18px;
+    border-top: 1px solid #dbe2ea;
+}
+
+.basket-summary > div {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+}
+
+.basket-summary p {
+    color: #6b7280;
+    font-size: 0.78rem;
+    margin-bottom: 14px;
+}
+
+.basket-checkout {
+    width: 100%;
+}
+
+.basket-clear {
+    width: 100%;
+    min-height: 42px;
+    margin-bottom: 10px;
+    border: 1px solid #dbe2ea;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #101820;
+    font: inherit;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.basket-clear:hover {
+    background: #f4f6f8;
+}
+
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    z-index: 120;
+    transform: translate(-50%, 22px);
+    padding: 11px 18px;
+    border-radius: 999px;
+    background: #39d316;
+    color: #061006;
+    font-weight: 900;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.25s ease;
+}
+
+.toast.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+}
+
+body.theme-sports:not(.admin-body) .basket-toggle,
+body.theme-sports:not(.admin-body) .mobile-basket-link {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+}
+
+body.theme-sports:not(.admin-body) .card-basket-btn {
+    background: linear-gradient(135deg, #4cff22, #27a80e);
+    color: #061006;
+}
+
+body.login-body {
+    background:
+        radial-gradient(circle at 80% 10%, rgba(57, 211, 22, 0.18), transparent 30%),
+        linear-gradient(135deg, #050805, #101820);
+}
+
+body.login-body .login-card {
+    border-color: rgba(57, 211, 22, 0.22);
+}
+
+body.login-body .login-logo::first-letter,
+body.login-body .eyebrow {
+    color: #39d316;
+}
+
+@media (max-width: 768px) {
+    .basket-toggle {
+        display: none;
+    }
+
+    .basket-drawer {
+        padding: 20px;
     }
 }

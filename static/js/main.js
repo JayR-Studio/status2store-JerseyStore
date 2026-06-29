@@ -106,6 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // =========================
     const sizeOptions = document.querySelectorAll(".size-option");
     const whatsappOrderBtn = document.querySelector(".whatsapp-order-btn");
+    const detailAddButton = document.querySelector(".detail-add");
 
     function updateWhatsAppOrderMessage(selectedSize) {
         if (!whatsappOrderBtn) {
@@ -157,9 +158,13 @@ document.addEventListener("DOMContentLoaded", function () {
         whatsappOrderBtn.href = `${baseUrl}?text=${encodedMessage}`;
     }
 
-    if (sizeOptions.length > 0 && whatsappOrderBtn) {
+    if (sizeOptions.length > 0) {
         const activeSize = document.querySelector(".size-option.active");
         const defaultSize = activeSize ? activeSize.dataset.size : sizeOptions[0].dataset.size;
+
+        if (detailAddButton) {
+            detailAddButton.dataset.size = defaultSize;
+        }
 
         updateWhatsAppOrderMessage(defaultSize);
 
@@ -172,10 +177,358 @@ document.addEventListener("DOMContentLoaded", function () {
                 button.classList.add("active");
 
                 const selectedSize = button.dataset.size;
+                if (detailAddButton) {
+                    detailAddButton.dataset.size = selectedSize;
+                }
                 updateWhatsAppOrderMessage(selectedSize);
             });
         });
     }
+
+    // =========================
+    // Order basket
+    // =========================
+    const basketKey = "footballchannel_basket";
+    const basketDrawer = document.getElementById("basketDrawer");
+    const basketOverlay = document.getElementById("basketOverlay");
+    const basketToggle = document.getElementById("basketToggle");
+    const mobileBasketToggle = document.getElementById("mobileBasketToggle");
+    const basketClose = document.getElementById("basketClose");
+    const basketItems = document.getElementById("basketItems");
+    const basketTotal = document.getElementById("basketTotal");
+    const basketCheckout = document.getElementById("basketCheckout");
+    const basketClear = document.getElementById("basketClear");
+    const basketToast = document.getElementById("basketToast");
+    const basketCountEls = document.querySelectorAll(".basket-count");
+    const addToBasketButtons = document.querySelectorAll(".add-to-basket");
+
+    function getBasket() {
+        try {
+            return JSON.parse(localStorage.getItem(basketKey)) || [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function saveBasket(items) {
+        localStorage.setItem(basketKey, JSON.stringify(items));
+    }
+
+    function formatNaira(value) {
+        return `₦${Number(value || 0).toLocaleString()}`;
+    }
+
+    function getSizesFromValue(value, fallback) {
+        const sizes = String(value || fallback || "S,M,L,XL,XXL")
+            .split(",")
+            .map(function (size) {
+                return size.trim();
+            })
+            .filter(Boolean);
+
+        return sizes.length ? sizes : ["S", "M", "L", "XL", "XXL"];
+    }
+
+    function escapeHtml(value) {
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function openBasket() {
+        if (!basketDrawer || !basketOverlay) {
+            return;
+        }
+
+        basketDrawer.classList.add("active");
+        basketOverlay.classList.add("active");
+        basketDrawer.setAttribute("aria-hidden", "false");
+        document.body.classList.add("basket-open");
+    }
+
+    function closeBasket() {
+        if (!basketDrawer || !basketOverlay) {
+            return;
+        }
+
+        basketDrawer.classList.remove("active");
+        basketOverlay.classList.remove("active");
+        basketDrawer.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("basket-open");
+    }
+
+    function showBasketToast(message) {
+        if (!basketToast) {
+            return;
+        }
+
+        basketToast.textContent = message;
+        basketToast.classList.add("active");
+
+        setTimeout(function () {
+            basketToast.classList.remove("active");
+        }, 1800);
+    }
+
+    function renderBasket() {
+        if (!basketItems || !basketTotal) {
+            return;
+        }
+
+        const items = getBasket();
+        const itemCount = items.reduce(function (total, item) {
+            return total + item.quantity;
+        }, 0);
+        const total = items.reduce(function (sum, item) {
+            return sum + (item.price * item.quantity);
+        }, 0);
+
+        basketCountEls.forEach(function (countEl) {
+            countEl.textContent = itemCount;
+        });
+
+        basketTotal.textContent = formatNaira(total);
+
+        if (basketCheckout) {
+            basketCheckout.disabled = items.length === 0;
+        }
+
+        if (basketClear) {
+            basketClear.disabled = items.length === 0;
+        }
+
+        if (items.length === 0) {
+            basketItems.innerHTML = `
+                <div class="basket-empty">
+                    <h3>Your basket is empty</h3>
+                    <p>Add jerseys from the catalogue, then send everything to WhatsApp at once.</p>
+                </div>
+            `;
+            return;
+        }
+
+        basketItems.innerHTML = items.map(function (item) {
+            const imageMarkup = item.image
+                ? `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">`
+                : `<span>${escapeHtml(item.name.charAt(0))}</span>`;
+
+            const sizeOptionsMarkup = getSizesFromValue(item.sizes, item.size).map(function (size) {
+                const selected = size === item.size ? "selected" : "";
+                return `<option value="${escapeHtml(size)}" ${selected}>${escapeHtml(size)}</option>`;
+            }).join("");
+
+            return `
+                <div class="basket-item" data-key="${escapeHtml(item.key)}">
+                    <div class="basket-item-image">${imageMarkup}</div>
+                    <div class="basket-item-info">
+                        <h3>${escapeHtml(item.name)}</h3>
+                        <label class="basket-size-label">
+                            Size
+                            <select class="basket-size-select" data-key="${escapeHtml(item.key)}">
+                                ${sizeOptionsMarkup}
+                            </select>
+                        </label>
+                        <strong>${formatNaira(item.price)}</strong>
+                        <div class="quantity-control">
+                            <button type="button" class="basket-qty" data-action="decrease" data-key="${escapeHtml(item.key)}">-</button>
+                            <span>${item.quantity}</span>
+                            <button type="button" class="basket-qty" data-action="increase" data-key="${escapeHtml(item.key)}">+</button>
+                        </div>
+                    </div>
+                    <button type="button" class="basket-remove" data-key="${escapeHtml(item.key)}" aria-label="Remove ${escapeHtml(item.name)}">&times;</button>
+                </div>
+            `;
+        }).join("");
+    }
+
+    function addItemToBasket(button) {
+        const id = button.dataset.id;
+        const size = button.dataset.size || "Not selected";
+        const key = `${id}-${size}`;
+        const items = getBasket();
+        const existingItem = items.find(function (item) {
+            return item.key === key;
+        });
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            items.push({
+                key,
+                id,
+                name: button.dataset.name || "Jersey",
+                price: Number(button.dataset.price || 0),
+                image: button.dataset.image || "",
+                url: button.dataset.url || window.location.href,
+                size,
+                sizes: getSizesFromValue(button.dataset.sizes, size).join(","),
+                quantity: 1
+            });
+        }
+
+        saveBasket(items);
+        renderBasket();
+        showBasketToast("Added to basket");
+    }
+
+    function updateBasketQuantity(key, action) {
+        let items = getBasket();
+
+        items = items.map(function (item) {
+            if (item.key !== key) {
+                return item;
+            }
+
+            const nextQuantity = action === "increase" ? item.quantity + 1 : item.quantity - 1;
+            return {
+                ...item,
+                quantity: nextQuantity
+            };
+        }).filter(function (item) {
+            return item.quantity > 0;
+        });
+
+        saveBasket(items);
+        renderBasket();
+    }
+
+    function updateBasketSize(key, nextSize) {
+        const items = getBasket();
+        const currentItem = items.find(function (item) {
+            return item.key === key;
+        });
+
+        if (!currentItem) {
+            return;
+        }
+
+        const nextKey = `${currentItem.id}-${nextSize}`;
+        const existingItem = items.find(function (item) {
+            return item.key === nextKey && item.key !== key;
+        });
+
+        if (existingItem) {
+            existingItem.quantity += currentItem.quantity;
+            saveBasket(items.filter(function (item) {
+                return item.key !== key;
+            }));
+        } else {
+            currentItem.size = nextSize;
+            currentItem.key = nextKey;
+            saveBasket(items);
+        }
+
+        renderBasket();
+    }
+
+    function removeBasketItem(key) {
+        const items = getBasket().filter(function (item) {
+            return item.key !== key;
+        });
+
+        saveBasket(items);
+        renderBasket();
+    }
+
+    function clearBasket() {
+        saveBasket([]);
+        renderBasket();
+        showBasketToast("Basket cleared");
+    }
+
+    function checkoutBasket() {
+        const items = getBasket();
+        const whatsappNumber = basketDrawer ? basketDrawer.dataset.whatsappNumber : "";
+
+        if (!items.length) {
+            showBasketToast("Your basket is empty");
+            return;
+        }
+
+        if (!whatsappNumber) {
+            showBasketToast("WhatsApp number is not set");
+            return;
+        }
+
+        const total = items.reduce(function (sum, item) {
+            return sum + (item.price * item.quantity);
+        }, 0);
+
+        const lines = items.map(function (item, index) {
+            return `${index + 1}. ${item.name}
+Size: ${item.size}
+Quantity: ${item.quantity}
+Unit Price: ${formatNaira(item.price)}
+Subtotal: ${formatNaira(item.price * item.quantity)}
+Link: ${item.url}`;
+        }).join("\n\n");
+
+        const message = `Hello, I want to place this jersey order:
+
+${lines}
+
+Total: ${formatNaira(total)}
+
+Please confirm availability, payment, and delivery details.`;
+
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank");
+    }
+
+    addToBasketButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            if (!button.disabled) {
+                addItemToBasket(button);
+            }
+        });
+    });
+
+    if (basketItems) {
+        basketItems.addEventListener("click", function (event) {
+            const quantityButton = event.target.closest(".basket-qty");
+            const removeButton = event.target.closest(".basket-remove");
+
+            if (quantityButton) {
+                updateBasketQuantity(quantityButton.dataset.key, quantityButton.dataset.action);
+            }
+
+            if (removeButton) {
+                removeBasketItem(removeButton.dataset.key);
+            }
+        });
+
+        basketItems.addEventListener("change", function (event) {
+            const sizeSelect = event.target.closest(".basket-size-select");
+
+            if (sizeSelect) {
+                updateBasketSize(sizeSelect.dataset.key, sizeSelect.value);
+            }
+        });
+    }
+
+    [basketToggle, mobileBasketToggle].forEach(function (button) {
+        if (button) {
+            button.addEventListener("click", openBasket);
+        }
+    });
+
+    [basketClose, basketOverlay].forEach(function (button) {
+        if (button) {
+            button.addEventListener("click", closeBasket);
+        }
+    });
+
+    if (basketCheckout) {
+        basketCheckout.addEventListener("click", checkoutBasket);
+    }
+
+    if (basketClear) {
+        basketClear.addEventListener("click", clearBasket);
+    }
+
+    renderBasket();
 
     // =========================
     // Browser-side image compression

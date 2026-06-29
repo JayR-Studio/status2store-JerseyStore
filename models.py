@@ -84,7 +84,7 @@ class SiteSettings(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    business_name = db.Column(db.String(150), default="Status2Store")
+    business_name = db.Column(db.String(150), default="FootballChannel")
     whatsapp_number = db.Column(db.String(50), nullable=True)
     instagram_url = db.Column(db.String(300), nullable=True)
     location = db.Column(db.String(200), nullable=True)
@@ -97,9 +97,9 @@ class SiteSettings(db.Model):
     logo_url = db.Column(db.String(500), nullable=True)
     hero_image_url = db.Column(db.String(500), nullable=True)
 
-    primary_color = db.Column(db.String(20), default="#C8942E")
-    secondary_color = db.Column(db.String(20), default="#1A1A1A")
-    theme = db.Column(db.String(50), default="luxury")
+    primary_color = db.Column(db.String(20), default="#39D316")
+    secondary_color = db.Column(db.String(20), default="#050805")
+    theme = db.Column(db.String(50), default="sports")
 
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
     updated_at = db.Column(

@@ -14,7 +14,7 @@
 
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
-<body class="theme-{{ settings.theme if settings and settings.theme else 'luxury' }}">
+<body class="theme-{{ settings.theme if settings and settings.theme else 'sports' }}">
 
 <header class="site-header">
     <div class="container nav-wrapper">
@@ -40,6 +40,11 @@
         </a>
         {% endif %}
 
+        <button class="basket-toggle" id="basketToggle" type="button" aria-label="Open order basket">
+            Basket
+            <span class="basket-count" id="basketCount">0</span>
+        </button>
+
         <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
             <span></span>
             <span></span>
@@ -64,19 +69,57 @@
         Chat on WhatsApp
     </a>
     {% endif %}
+
+    <button class="mobile-basket-link" id="mobileBasketToggle" type="button">
+        View Basket
+        <span class="basket-count" id="mobileBasketCount">0</span>
+    </button>
 </div>
 
 <main>
     {% block content %}{% endblock %}
 </main>
 
+<div class="basket-overlay" id="basketOverlay"></div>
+<aside
+    class="basket-drawer"
+    id="basketDrawer"
+    data-whatsapp-number="{{ settings.whatsapp_number if settings and settings.whatsapp_number else '' }}"
+    aria-hidden="true"
+>
+    <div class="basket-head">
+        <div>
+            <span class="eyebrow">Order Basket</span>
+            <h2>Your Jerseys</h2>
+        </div>
+        <button class="basket-close" id="basketClose" type="button" aria-label="Close basket">&times;</button>
+    </div>
+
+    <div class="basket-items" id="basketItems"></div>
+
+    <div class="basket-summary">
+        <div>
+            <span>Total</span>
+            <strong id="basketTotal">₦0</strong>
+        </div>
+        <p>Delivery fee and final availability will be confirmed on WhatsApp.</p>
+        <button class="basket-clear" id="basketClear" type="button">
+            Clear Basket
+        </button>
+        <button class="btn-primary basket-checkout" id="basketCheckout" type="button">
+            Checkout on WhatsApp
+        </button>
+    </div>
+</aside>
+
+<div class="toast" id="basketToast">Added to basket</div>
+
 <footer class="site-footer" id="contact">
     <div class="container footer-grid">
         <div>
             <h2>{{ settings.business_name if settings else "FootballChannel" }}</h2>
             <p>
-                {{ settings.about_text if settings and settings.about_text else "A premium catalogue website for stylish
-                WhatsApp and Instagram vendors." }}
+                {{ settings.about_text if settings and settings.about_text else "A premium football jersey catalogue for fans, teams, and WhatsApp orders." }}
             </p>
         </div>
 

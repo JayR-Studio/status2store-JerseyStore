@@ -118,24 +118,29 @@
         Please notify me when it is back in stock.
         {% endset %}
 
-        {% if settings and settings.whatsapp_number %}
+        {% set basket_image = product.image_url if product.image_url and product.image_url.startswith('http') else (url_for('static', filename=product.image_url) if product.image_url else '') %}
+        <button
+            class="btn-primary full-btn add-to-basket detail-add"
+            type="button"
+            data-id="{{ product.id }}"
+            data-name="{{ product.name }}"
+            data-price="{{ product.price }}"
+            data-image="{{ basket_image }}"
+            data-url="{{ request.url }}"
+            data-size="{{ default_size }}"
+            data-sizes="{{ product.sizes or 'S,M,L,XL,XXL' }}"
+            {% if not product.is_available %}disabled{% endif %}
+        >
+            {{ "Add to Basket" if product.is_available else "Out of Stock" }}
+        </button>
+
+        {% if settings and settings.whatsapp_number and not product.is_available %}
         <a
-            class="btn-primary full-btn whatsapp-order-btn {% if not product.is_available %}restock-btn{% endif %}"
-            href="https://wa.me/{{ settings.whatsapp_number }}?text={{ order_message | urlencode if product.is_available else restock_message | urlencode }}"
-            data-base-url="https://wa.me/{{ settings.whatsapp_number }}"
-            data-product-name="{{ product.name }}"
-            data-product-category="{{ product_category }}"
-            data-product-price="₦{{ '{:,}'.format(product.price) }}"
-            data-product-description="{{ product_description }}"
-            data-product-url="{{ request.url }}"
-            data-available="{{ 'true' if product.is_available else 'false' }}"
+            class="btn-secondary full-btn restock-btn"
+            href="https://wa.me/{{ settings.whatsapp_number }}?text={{ restock_message | urlencode }}"
             target="_blank"
         >
-            {% if product.is_available %}
-            Order on WhatsApp
-            {% else %}
             Ask About Restock
-            {% endif %}
         </a>
         {% endif %}
         <a href="{{ url_for('catalogue') }}" class="text-link back-link">← Back to Catalogue</a>

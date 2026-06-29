@@ -37,14 +37,14 @@ with app.app_context():
 
     if not SiteSettings.query.first():
         settings = SiteSettings(
-            business_name=os.getenv("BUSINESS_NAME", "Status2Store"),
+            business_name=os.getenv("BUSINESS_NAME", "FootballChannel"),
             whatsapp_number=os.getenv("WHATSAPP_NUMBER", ""),
             instagram_url=os.getenv("INSTAGRAM_URL", ""),
             location=os.getenv("BUSINESS_LOCATION", "Nigeria"),
-            about_text="Browse products, check prices, and order directly on WhatsApp.",
-            delivery_note="Delivery details are confirmed on WhatsApp.",
+            about_text="Premium football jerseys, training kits, and fan wear available for quick WhatsApp orders.",
+            delivery_note="Nationwide delivery is available. Delivery fee and timeline are confirmed on WhatsApp.",
             payment_note="Payment details are confirmed on WhatsApp.",
-            theme=os.getenv("SITE_THEME", "luxury")
+            theme=os.getenv("SITE_THEME", "sports")
         )
         db.session.add(settings)
         print("Site settings created.")
@@ -52,13 +52,13 @@ with app.app_context():
         print("Site settings already exist.")
 
     starter_categories = [
-        "Dresses",
-        "Tops",
-        "Two Pieces",
-        "Skirts",
-        "Bags",
-        "Shoes",
-        "Accessories"
+        "Premier League",
+        "La Liga",
+        "Serie A",
+        "National Teams",
+        "Kids Jerseys",
+        "Training Kits",
+        "Retro Jerseys"
     ]
 
     for category_name in starter_categories:
